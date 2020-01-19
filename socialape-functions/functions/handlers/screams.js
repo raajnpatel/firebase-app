@@ -1,8 +1,7 @@
 const { db } = require('../utils/admin');
 
 exports.getAllScreams = (req, res) => {
-    db
-        .collection('screams')
+    db.collection('screams')
         .orderBy('createdAt', 'desc')
         .get()
         .then(data => {
@@ -26,22 +25,23 @@ exports.getAllScreams = (req, res) => {
 };
 
 exports.postOneScream = (req, res) => {
+    if (req.body.body.trim() === '') {
+        return res.status(400).json({ body: 'Body must not be empty' });
+    }
+
     const newScream = {
         body: req.body.body,
         userHandle: req.user.handle,
-        createdAt:  admin.firestore.Timestamp.fromDate(new Date())
+        createdAt: new Date().toISOString()
     };
 
-    db
-        .collection('screams')
+    db.collection('screams')
         .add(newScream)
-        .then(doc => {
-            res.json({message:`document ${doc.id} created successfully`})
+        .then((doc) => {
+            res.json({ message: `document ${doc.id} created successfully` });
         })
-        .catch(error => {
-            console.log(error);
-            res
-                .status(500)
-                .json({error:"Error wow"})
-        })
+        .catch((err) => {
+            res.status(500).json({ error: 'something went wrong' });
+            console.error(err);
+        });
 };

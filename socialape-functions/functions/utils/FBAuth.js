@@ -1,4 +1,4 @@
-const { admin } = require('./admin');
+const { admin, db } = require('./admin');
 
 module.exports = (req, res, next) => {
     let idToken;
@@ -28,8 +28,8 @@ module.exports = (req, res, next) => {
             req.user.handle = data.docs[0].data().handle;
             return next();
         })
-        .catch((err) => {
-            console.error('Error while verifying token ', err);
-            return res.status(403).json(err);
+        .catch((error) => {
+            console.error('Error while verifying token ', error);
+            return res.status(403).json(error);
         });
 };
